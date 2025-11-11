@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-
+import 'package:movieapp/register/register_screen.dart';
+import 'package:movieapp/update/profile_screen.dart';
 import 'Ui/login/LoginPage.dart';
 import 'Ui/onboarding_screen.dart';
 import 'Utils/AppRouteNames.dart';
@@ -11,20 +12,22 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Movies App',
       debugShowCheckedModeBanner: false,
-        initialRoute: Approutenames.OnBoardingScreen,
-        routes: {
-          Approutenames.OnBoardingScreen: (context) => OnboardingScreens(),
-          Approutenames.Login: (context) => Loginpage(),
+      theme: ThemeData.dark(),
+      initialRoute: Approutenames.profile,
+      routes: {
+        Approutenames.OnBoardingScreen: (context) => OnboardingScreens(),
+        Approutenames.Login: (context) => Loginpage(),
+        Approutenames.Register: (context) => RegisterScreen(),
+        Approutenames.profile: (context) => ProfileScreen(),
 
-        }
+
+      },
     );
-
   }
-
-
 }
+
