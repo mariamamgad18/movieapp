@@ -14,10 +14,14 @@ class Appimages {
   static const String EmailIcon = "assets/images/emailicon.png";
   static const String NameIcon = "assets/images/🦆 icon _Identification_.png";
   static const String PhoneIcon = "assets/images/Vector.png";
-
   static const String Gamer1 = "assets/images/gamer (1).png";
   static const String Gamer2 = "assets/images/gamer (2).png";
   static const String Gamer3 = "assets/images/gamer (3).png";
+  static const String Gamer4 = "assets/images/gamer (4).png";
+  static const String Gamer5 = "assets/images/gamer (5).png";
+  static const String Gamer6 = "assets/images/gamer (6).png";
+  static const String Gamer7 = "assets/images/gamer (7).png";
+  static const String Gamer8 = "assets/images/gamer (8).png";
 
   static const String ForgotPassword = "assets/images/Forgot password-bro 1.png";
 
