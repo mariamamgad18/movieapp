@@ -1,7 +1,10 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:movieapp/Ui/login/YellowButton.dart';
+import 'package:movieapp/register/register_screen.dart';
+import 'package:movieapp/update/profile_screen.dart';
 
+import '../../forgetpassword/forgetpassword_screen.dart';
 import '../../utils/AppColors.dart';
 import '../../utils/AppImages.dart';
 import 'SwitchLanguageButton.dart';
@@ -75,11 +78,22 @@ class _LoginpageState extends State<Loginpage> {
                   textAlign: TextAlign.end,
                 ),
                 onTap: () {
-
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ForgetPasswordScreen(),
+                    ),
+                  );
                 },
               ),
               InkWell(
                 onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProfileScreen(),
+                      ),
+                  );
                 },
                 child: Yellowbutton(
 buttonText: "Login",                ),
@@ -104,7 +118,12 @@ buttonText: "Login",                ),
                       ),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
-
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => RegisterScreen(),
+                            ),
+                          );
                         },
                     ),
                   ],

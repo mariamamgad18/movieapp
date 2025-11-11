@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:movieapp/Utils/AppColors.dart';
 
+import '../resetpassword/resetpassword_screen.dart';
+
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
   @override
@@ -158,6 +160,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     alignment: Alignment.centerLeft,
                     child: TextButton(
                       onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ResetPasswordScreen(),
+                          ),
+                        );
                       },
                       style: TextButton.styleFrom(
                           padding: EdgeInsets.zero, visualDensity: VisualDensity.compact),
