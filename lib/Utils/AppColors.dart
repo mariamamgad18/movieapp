@@ -10,7 +10,7 @@ class Appcolors {
   static final Color whitekColor = Color(0xFFFFFFFF);
   static final Color greenColor = Color(0xFF57AA53);
   static final Color redColor = Color(0xFFE82626);
-
+  static const card = Color(0xFF1F1F1F);
 
 
 }
