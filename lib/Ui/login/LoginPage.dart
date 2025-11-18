@@ -4,8 +4,10 @@ import 'package:movieapp/Api/Api_Manager.dart';
 import 'package:movieapp/Ui/login/YellowButton.dart';
 import 'package:movieapp/Utils/AppRouteNames.dart';
 
+import '../../Utils/UserToken.dart';
 import '../../utils/AppColors.dart';
 import '../../utils/AppImages.dart';
+import 'ShowDialog.dart';
 import 'SwitchLanguageButton.dart';
 import 'Textfieldcontainer.dart';
 
@@ -102,33 +104,57 @@ class _LoginpageState extends State<Loginpage> {
                     final String password = passwordController.text.trim();
 
                     try {
-                      // هنا هنستدعي الـ API
                       final response = await ApiManager().login(email: email, password: password);
 
-                      if (response.statusCode == 200) {
-                        // مثلا لو السيرفر رجع حاجة فيها success
-                        if (response.data['success'] == true) {
-                          print("Login Successful");
-                          // هنا هننافيجيت للهوم شكرين
+                      if (response.statusCode == 200 || response.statusCode == 201) {
+
+                        if ((response.data['message'] as String).contains("Success")) {
+                          String token = response.data['token'];
+                          await Usertoken.saveToken(token);  // يعني خد التوكين احفظه ف الشيرد بريفرنس
+                          print("Token saved: $token");
+                          MyDialog.show(context: context, title: "Done", message: "Login Successful", onPressed: () {
+                            Navigator.of(context).pushReplacementNamed(Approutenames.profile);
+
+                          });
                         } else {
                           print("Login Failed: ${response.data['message']}");
-                          // هنا ممكن نعرض  AlertDialog و جواه الايرور
+                          MyDialog.show(context: context, title: "Login Failed", message: "${response.data['message']}", onPressed: () {
+
+                            Navigator.of(context).pop();
+
+                          });
+
                         }
                       } else {
                         print("Error: ${response.statusCode}");
+                        MyDialog.show(context: context, title: "Error!", message: " ${response.statusCode}", onPressed: () {
+                          Navigator.of(context).pop();
+
+                        });
+
                       }
                     } catch (e) {
                       print("Exception: $e");
+                      MyDialog.show(context: context, title: "Exception!", message: "$e", onPressed: () {
+                        Navigator.of(context).pop();
+
+                      });
+
                     }
                   } else {
                     print("Validation failed");
+                    MyDialog.show(context: context, title: "Exception!", message: "Validation failed", onPressed: () {
+                      Navigator.of(context).pop();
+
+                    });
+
                   }
                 },
-
                 child: Yellowbutton(
                   buttonText: "Login",
                 ),
               ),
+
 
               /// Register text
               RichText(
