@@ -207,10 +207,25 @@ class _LoginpageState extends State<Loginpage> {
               ),
 
               /// Google login
-              Yellowbutton(
-                buttonText: "Login With Google",
-                imagePath: Appimages.GOOGLE,
+              ///
+              /// Google login
+              InkWell(
+                onTap: () {
+                  MyDialog.show(
+                    context: context,
+                    title: "Success",
+                    message: "Login with Google successful",
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(context, Approutenames.profile);
+                    },
+                  );
+                },
+                child: Yellowbutton(
+                  buttonText: "Login With Google",
+                  imagePath: Appimages.GOOGLE,
+                ),
               ),
+
 
               const SizedBox(height: 25),
 
