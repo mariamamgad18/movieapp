@@ -28,8 +28,8 @@ class ResetField extends StatelessWidget{
         filled: true,
         fillColor: Appcolors.card,
         hintText: hint,
-        hintStyle:  TextStyle(color: Appcolors.grayColor),
-        prefixIcon:  Icon(Icons.person, color: Appcolors.grayColor),
+        hintStyle:  TextStyle(color: Appcolors.whitekColor),
+        prefixIcon:  Icon(Icons.person, color: Appcolors.whitekColor),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide.none,
@@ -52,7 +52,7 @@ class ResetField extends StatelessWidget{
         ),
         onPressed: () {},
         child:  Text(
-          "Save",
+          "Reset",
           style: TextStyle(
             color: Appcolors.blackColor,
             fontSize: 16,

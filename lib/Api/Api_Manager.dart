@@ -25,7 +25,7 @@ class ApiManager {
         // void Function(int, int)? onSendProgress,
         // void Function(int, int)? onReceiveProgress,
         // }
-        Apiendpoint.Url,  //path
+        Apiendpoint.LoginUrl,  //path
         data: { //data
           "email": email,
           "password": password,
@@ -42,7 +42,7 @@ class ApiManager {
       if (e.response != null) {   // لو مثلا في ايرور زي مثلا لو الباسوورد غلط
         return e.response!;
       }else {
-        throw Exception("Network error: ${e.message}");   // كده ال  e.response ب null يعني مفيش ريسبونس اصلا
+        throw Exception("Network error: ${e.message}");   // كده ال  e.response ب nFuture<Response>ش ريسبونس اصلا
 
       }
 
@@ -51,6 +51,64 @@ class ApiManager {
   }
 
 
+
+  Future<Response> register({
+    required String name,
+    required String email,
+    required String password,
+    required String confirmPassword,
+    required String phone,
+    required int avaterId,
+  })
+  async {
+    print("name: $name");
+    print("email: $email");
+    print("password: $password");
+    print("confirmPassword: $confirmPassword");
+    print("phone: $phone");
+    print("avaterId: $avaterId");
+    try {
+      final response = await dio.post(
+
+        Apiendpoint.RrgisterUrl,
+        //path
+        data: { //data
+          "name": name,
+          "email": email,
+          "password": password,
+          "confirmPassword": confirmPassword,
+          "phone": phone,
+          "avaterId": avaterId,
+
+        },
+        options: Options(  //options
+          headers: {'Content-Type': 'application/json'},  //علشان السيرفر يعرف ان البيانات JSON
+        ),
+
+      );
+      return response;
+
+    }
+    on DioException catch (e){
+      if (e.response != null) {   // لو مثلا في ايرور زي مثلا لو الباسوورد غلط
+        return e.response!;
+      }else {
+        throw Exception("Network error: ${e.message}");   // كده ال  e.response ب nFuture<Response>ش ريسبونس اصلا
+
+      }
+
+    }
+
+
+
+
+
+
+
+
+
+
+  }
 
 
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movieapp/Utils/AppColors.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../resetpassword/resetpassword_screen.dart';
 
@@ -19,22 +20,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
     'assets/images/gamer (6).png',
     'assets/images/gamer (7).png',
     'assets/images/gamer (8).png',
-    'assets/images/gamer (4).png',
   ];
 
   int selectedAvatarIndex = 0;
+  TextEditingController nameController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
 
-  final TextEditingController nameController = TextEditingController(text: "John Safwat");
-  final TextEditingController phoneController = TextEditingController(text: "01200000000");
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      nameController.text = prefs.getString('name') ?? '';
+      phoneController.text = prefs.getString('phone') ?? '';
+      selectedAvatarIndex = prefs.getInt('avatarId') ?? 0;
+    });
+  }
+
+  Future<void> _saveUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('name', nameController.text);
+    await prefs.setString('phone', phoneController.text);
+    await prefs.setInt('avatarId', selectedAvatarIndex);
+  }
 
   void _showAvatarPicker() async {
     final selected = await showModalBottomSheet<int>(
       context: context,
-      backgroundColor:Appcolors.grayColor,
+      backgroundColor: Appcolors.grayColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      isScrollControlled: false,
       builder: (BuildContext context) {
         return SizedBox(
           height: 320,
@@ -76,6 +96,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       setState(() {
         selectedAvatarIndex = selected;
       });
+      await _saveUserData();
     }
   }
 
@@ -88,15 +109,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          color:Appcolors.yellowColor,
+          color: Appcolors.yellowColor,
           onPressed: () {
             Navigator.maybePop(context);
           },
         ),
-        title:  Text(
-          'Pick Avatar',
-          style: TextStyle(color: Appcolors.yellowColor,
-              fontWeight: FontWeight.w600),
+        title: Text(
+          'Profile',
+          style: TextStyle(color: Appcolors.yellowColor, fontWeight: FontWeight.w600),
         ),
         centerTitle: true,
       ),
@@ -116,16 +136,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 24),
-
                   TextField(
                     controller: nameController,
-                    style:  TextStyle(color: Appcolors.whitekColor),
+                    style: TextStyle(color: Appcolors.whitekColor),
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.grey[850],
-                      prefixIcon:  Icon(Icons.person, color: Appcolors.whitekColor),
-                      hintText: 'John Safwat',
-                      hintStyle:  TextStyle(color: Appcolors.whitekColor),
+                      prefixIcon: Icon(Icons.person, color: Appcolors.whitekColor),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide.none,
@@ -135,17 +152,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 12),
-
                   TextField(
                     controller: phoneController,
                     keyboardType: TextInputType.phone,
-                    style:  TextStyle(color: Appcolors.whitekColor),
+                    style: TextStyle(color: Appcolors.whitekColor),
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.grey[850],
-                      prefixIcon:  Icon(Icons.phone, color: Appcolors.whitekColor),
-                      hintText: '01200000000',
-                      hintStyle:  TextStyle(color: Appcolors.whitekColor),
+                      prefixIcon: Icon(Icons.phone, color: Appcolors.whitekColor),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide.none,
@@ -155,7 +169,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 8),
-
                   Align(
                     alignment: Alignment.centerLeft,
                     child: TextButton(
@@ -179,7 +192,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
           ),
-
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
@@ -190,24 +202,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Appcolors.redColor,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: const Text('Delete Account'),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                      },
+                      onPressed: _saveUserData, // حفظ الاسم، رقم الموبايل والأفاتار
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Appcolors.yellowColor,
                         padding: const EdgeInsets.symmetric(vertical: 16),
