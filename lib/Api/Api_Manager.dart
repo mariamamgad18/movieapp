@@ -50,8 +50,6 @@ class ApiManager {
 
   }
 
-
-
   Future<Response> register({
     required String name,
     required String email,
@@ -112,4 +110,50 @@ class ApiManager {
 
 
 
-}
+  Future<Response> ChangePassword({
+    required String oldPassword,
+    required String newPassword,
+    required String confirmPassword,
+    required String token,
+  }) async {
+    print("oldPassword: $oldPassword");
+    print("newPassword: $newPassword");
+    print("confirmPassword: $confirmPassword");
+    print("token: $token");
+
+    try {
+      final response = await dio.patch(
+        Apiendpoint.ResetPassUrl,
+        data: {
+          "oldPassword": oldPassword,
+          "newPassword": newPassword,
+          "confirmPassword": confirmPassword,
+        },
+        options: Options(
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer $token",
+          },
+        ),
+      );
+
+      return response;
+    } on DioException catch (e) {
+      if (e.response != null) {
+        return e.response!;
+      } else {
+        throw Exception("Network error: ${e.message}");
+      }
+    }
+  }
+
+
+
+
+
+
+
+
+  }
+
+

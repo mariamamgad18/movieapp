@@ -1,12 +1,15 @@
 import 'package:shared_preferences/shared_preferences.dart';
 class Usertoken {
-  static  Future<void> saveToken(String token) async {
+  static Future<void> saveToken(String token) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('userToken', token);
   }
 
+  static Future<String?> getToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('userToken');
+  }
 }
-
 // ال Token :
 // هو رقم او كود ال Api بيديه لليوزر
 //  عشان بعد كده لو حب يعمل ريكويست يكون مسموحله ياخد بيانات
