@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movieapp/Ui/Layout_Pages.dart';
 import 'package:movieapp/forgetpassword/forgetpassword_screen.dart';
 import 'package:movieapp/register/register_screen.dart';
 import 'package:movieapp/update/profile_screen.dart';
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
         Approutenames.Register: (context) => RegisterScreen(),
         Approutenames.profile: (context) => ProfileScreen(),
         Approutenames.ForgetPassword:(context)=>ForgetPasswordScreen(),
+        Approutenames.LayoutScreens:(context)=>LayoutScreen(),
 
       },
     );
