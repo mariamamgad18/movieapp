@@ -31,14 +31,16 @@ class ResetPasswordScreen extends StatelessWidget{
         ),
       ),
 
-      body: const Padding(
-        padding: EdgeInsets.all(20),
-        child: Column(
-          children: [
-            ResetImage(),
-            SizedBox(height: 25),
-            ResetField(),
-          ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              ResetImage(),
+              SizedBox(height: 25),
+              ResetField(),
+            ],
+          ),
         ),
       ),
     );

@@ -5,5 +5,6 @@ class Approutenames {
   static const String profile = 'ProfileScreen';
   static const String ForgetPassword = 'ForgetPassword';
   static const String ResetPassword= 'ResetPassword';
+  static const String LayoutScreens='LayoutScreens';
 
 }

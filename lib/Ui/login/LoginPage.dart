@@ -1,12 +1,13 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:movieapp/Api/Api_Manager.dart';
 import 'package:movieapp/Ui/login/YellowButton.dart';
-import 'package:movieapp/register/register_screen.dart';
-import 'package:movieapp/update/profile_screen.dart';
+import 'package:movieapp/Utils/AppRouteNames.dart';
 
-import '../../forgetpassword/forgetpassword_screen.dart';
+import '../../Utils/UserToken.dart';
 import '../../utils/AppColors.dart';
 import '../../utils/AppImages.dart';
+import 'ShowDialog.dart';
 import 'SwitchLanguageButton.dart';
 import 'Textfieldcontainer.dart';
 
@@ -17,13 +18,21 @@ class Loginpage extends StatefulWidget {
 
 class _LoginpageState extends State<Loginpage> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
   @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    var Height = MediaQuery.of(context).size.height;
-    var Width = MediaQuery.of(context).size.width;
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
 
     return Scaffold(
       backgroundColor: Appcolors.blackColor,
@@ -33,14 +42,17 @@ class _LoginpageState extends State<Loginpage> {
           key: formKey,
           child: Column(
             children: [
+              /// Logo
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Image.asset(
                   Appimages.MovieLogo,
-                  width: Width * 0.3,
-                  height: Height * 0.2,
+                  width: width * 0.3,
+                  height: height * 0.2,
                 ),
               ),
+
+              /// Email
               TextfieldContainer(
                 text: "Email",
                 prefixIcon: Icons.email,
@@ -52,6 +64,8 @@ class _LoginpageState extends State<Loginpage> {
                   return null;
                 },
               ),
+
+              /// Password
               TextfieldContainer(
                 text: "Password",
                 prefixIcon: Icons.lock,
@@ -65,9 +79,10 @@ class _LoginpageState extends State<Loginpage> {
                 isPassword: true,
               ),
 
+              /// Forget password
               InkWell(
                 child: Text(
-"Forget Password ?"   ,
+                  "Forget Password ?",
                   style: TextStyle(
                     color: Appcolors.yellowColor,
                     fontStyle: FontStyle.italic,
@@ -75,71 +90,146 @@ class _LoginpageState extends State<Loginpage> {
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                   ),
-                  textAlign: TextAlign.end,
                 ),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const ForgetPasswordScreen(),
-                    ),
-                  );
-                },
+                onTap: () {},
               ),
+
+              /// Login Button
               InkWell(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ProfileScreen(),
-                      ),
-                  );
+                onTap: () async {
+                  if (formKey.currentState!.validate()) {
+                    final email = emailController.text.trim();
+                    final password = passwordController.text.trim();
+
+                    try {
+                      final response =
+                      await ApiManager().login(email: email, password: password);
+
+                      if (response.statusCode == 200 || response.statusCode == 201) {
+                        final msg = response.data['message']?.toString() ?? "";
+
+                        if (msg.contains("Success")) {
+                          final token = response.data['data']?.toString() ?? "";
+
+                          if (token.isNotEmpty) {
+                            await Usertoken.saveToken(token);
+                            print("TOKEN SAVED: $token");
+                          } else {
+                            print("⚠ التوكين فاضي — API شكلها رجّعت فورم مختلف");
+                          }
+
+                          MyDialog.show(
+                            context: context,
+                            title: "Done",
+                            message: "Login Successful",
+                            onPressed: () {
+                              Navigator.pushReplacementNamed(
+                                  context, Approutenames.profile);
+                            },
+                          );
+
+                        } else {
+                          MyDialog.show(
+                            context: context,
+                            title: "Login Failed",
+                            message: msg,
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          );
+                        }
+                      } else {
+                        MyDialog.show(
+                          context: context,
+                          title: "Error!",
+                          message: "Status Code: ${response.statusCode}",
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        );
+                      }
+                    } catch (e) {
+                      MyDialog.show(
+                        context: context,
+                        title: "Exception!",
+                        message: e.toString(),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      );
+                    }
+                  }
                 },
                 child: Yellowbutton(
-buttonText: "Login",                ),
-              ),
+                  buttonText: "Login",
+                ),
+              )
+,
+
+              /// Register text
               RichText(
                 text: TextSpan(
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  style:
+                  TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   children: [
                     TextSpan(
-                      text:"Don’t Have Account ?",
+                      text: "Don’t Have Account ? ",
                       style: TextStyle(
-                          color: Appcolors.whitekColor,
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14),
+                        color: Appcolors.whitekColor,
+                        fontSize: 14,
+                      ),
                     ),
                     TextSpan(
-                      text:"Create One",
+                      text: "Create One",
                       style: TextStyle(
-                        fontWeight: FontWeight.w500,
-
                         color: Appcolors.yellowColor,
+                        fontWeight: FontWeight.bold,
                       ),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => RegisterScreen(),
-                            ),
-                          );
+                          Navigator.of(context)
+                              .pushReplacementNamed(Approutenames.Register);
                         },
                     ),
                   ],
                 ),
               ),
+
+              /// OR
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20.0),
+                padding: const EdgeInsets.symmetric(vertical: 20),
                 child: Image.asset(
                   Appimages.OR,
                   width: 270,
-                  height: Height * 0.022,
+                  height: height * 0.022,
                   fit: BoxFit.fill,
                 ),
               ),
-Yellowbutton(buttonText:  "Login With Google",imagePath: Appimages.GOOGLE,),
-              SizedBox(height: 25),
+
+              /// Google login
+              ///
+              /// Google login
+              InkWell(
+                onTap: () {
+                  MyDialog.show(
+                    context: context,
+                    title: "Success",
+                    message: "Login with Google successful",
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(context, Approutenames.profile);
+                    },
+                  );
+                },
+                child: Yellowbutton(
+                  buttonText: "Login With Google",
+                  imagePath: Appimages.GOOGLE,
+                ),
+              ),
+
+
+              const SizedBox(height: 25),
+
+              /// Switch language
               Switchlanguagebutton(),
             ],
           ),
