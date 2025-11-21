@@ -25,6 +25,7 @@ class Appimages {
 
   static const String ForgotPassword = "assets/images/Forgot password-bro 1.png";
 
+  static const String homebackground = "assets/images/Home.png";
 
 
 
