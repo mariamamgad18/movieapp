@@ -1,15 +1,19 @@
 //هنجمع هنا كل الlogic بتاع ال api
 
 
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 
+import '../models/movies_response.dart';
 import 'ApiEndpoint.dart';
 class ApiManager {
 //todo : هنعمل obj من Dio
   final dio = Dio();
-//هتبقي future , async عشان هنستني الرد من السيرفر قبل ما نكمل أي حاجة
 
-  Future<Response> login({required String email, required String password}) async
+  Future<Response> login(
+      {required String email, required String password}) async
 
   {
     print("Email: $email");
@@ -25,29 +29,29 @@ class ApiManager {
         // void Function(int, int)? onSendProgress,
         // void Function(int, int)? onReceiveProgress,
         // }
-        Apiendpoint.LoginUrl,  //path
+        Apiendpoint.LoginUrl, //path
         data: { //data
           "email": email,
           "password": password,
         },
 
-        options: Options(  //options
-          headers: {'Content-Type': 'application/json'},  //علشان السيرفر يعرف ان البيانات JSON
+        options: Options( //options
+          headers: {
+            'Content-Type': 'application/json'
+          }, //علشان السيرفر يعرف ان البيانات JSON
         ),
 
       );
       return response;
-
-    }on DioException catch (e){
-      if (e.response != null) {   // لو مثلا في ايرور زي مثلا لو الباسوورد غلط
+    } on DioException catch (e) {
+      if (e.response != null) { // لو مثلا في ايرور زي مثلا لو الباسوورد غلط
         return e.response!;
-      }else {
-        throw Exception("Network error: ${e.message}");   // كده ال  e.response ب nFuture<Response>ش ريسبونس اصلا
+      } else {
+        throw Exception("Network error: ${e
+            .message}"); // كده ال  e.response ب nFuture<Response>ش ريسبونس اصلا
 
       }
-
     }
-
   }
 
   Future<Response> register({
@@ -57,8 +61,7 @@ class ApiManager {
     required String confirmPassword,
     required String phone,
     required int avaterId,
-  })
-  async {
+  }) async {
     print("name: $name");
     print("email: $email");
     print("password: $password");
@@ -79,35 +82,25 @@ class ApiManager {
           "avaterId": avaterId,
 
         },
-        options: Options(  //options
-          headers: {'Content-Type': 'application/json'},  //علشان السيرفر يعرف ان البيانات JSON
+        options: Options( //options
+          headers: {
+            'Content-Type': 'application/json'
+          }, //علشان السيرفر يعرف ان البيانات JSON
         ),
 
       );
       return response;
-
     }
-    on DioException catch (e){
-      if (e.response != null) {   // لو مثلا في ايرور زي مثلا لو الباسوورد غلط
+    on DioException catch (e) {
+      if (e.response != null) { // لو مثلا في ايرور زي مثلا لو الباسوورد غلط
         return e.response!;
-      }else {
-        throw Exception("Network error: ${e.message}");   // كده ال  e.response ب nFuture<Response>ش ريسبونس اصلا
+      } else {
+        throw Exception("Network error: ${e
+            .message}"); // كده ال  e.response ب nFuture<Response>ش ريسبونس اصلا
 
       }
-
     }
-
-
-
-
-
-
-
-
-
-
   }
-
 
 
   Future<Response> ChangePassword({
@@ -148,12 +141,71 @@ class ApiManager {
   }
 
 
+  Future<MoviesResponse> getMovies() async {
+    try {
+      final response = await dio.get(Apiendpoint.MoviesUrl);
 
+      if (response.statusCode == 200) {
+        dynamic jsonData;
 
+        // لو رجع String → حوله JSON
+        if (response.data is String) {
+          jsonData = jsonDecode(response.data);
+        } else {
+          jsonData = response.data;
+        }
 
+        final moviesResponse = MoviesResponse.fromJson(jsonData);
 
-
-
+        if (moviesResponse.status == "ok") {
+          return moviesResponse;
+        } else {
+          throw Exception("API error: ${moviesResponse.statusMessage}");
+        }
+      } else {
+        throw Exception("Server returned status code ${response.statusCode}");
+      }
+    } on DioException catch (e) {
+      throw Exception("Network error: ${e.message}");
+    } catch (e) {
+      throw Exception("Parsing error: $e");
+    }
   }
+
+
+
+//todo: الفانكشن المسؤوله عن تصنيف الافلام ف الهوم بيدج
+  //الفانكشن المفروض ترجعلي ماب  movies  , ال key هو اسم التصنيف و الvalue هي الليسته نفسها
+
+  Future<Map<String, List<Movies>>> getMoviesGroupedByGenre() async {
+    // 1. نجيب كل الأفلام
+    final moviesResponse = await getMovies();
+
+    // 2. نعمل ليسته من نوع Movies تشيل فيها الأفلام اللي رجعها السيرفر، ولو مفيش حط ليسته فاضية
+    final List<Movies> moviesList = moviesResponse.data?.movies ?? [];
+
+    // 3. نعمل ماب تشيل اسم التصنيف والقيمة هي ليسته الأفلام حسب التصنيف
+    Map<String, List<Movies>> moviesByGenres = {};
+
+    // 4. الفور لوب عشان تعدي على كل فيلم
+    for (var movie in moviesList) {
+      if (movie.genres != null) {
+        for (var genre in movie.genres!) {
+          // لو التصنيف ده مش موجود في الماب نضيفه
+          if (!moviesByGenres.containsKey(genre)) {
+            moviesByGenres[genre] = [];
+          }
+          // نضيف الفيلم للنوع ده
+          moviesByGenres[genre]!.add(movie);
+        }
+      }
+    }
+
+    // 5. نرجع الماب
+    return moviesByGenres;
+  }
+}
+
+
 
 

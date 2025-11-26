@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../Pages/Browse_Page.dart';
+import '../Pages/HomeTab/Home.dart';
 import '../Pages/Profile_Page.dart';
 import '../Pages/Search_Page.dart';
-import '../Pages/tabs/home_tab.dart';
 import 'bottom_navigation_bar.dart';
 
 class LayoutScreen extends StatefulWidget {
@@ -17,7 +17,7 @@ class _LayoutScreenState extends State<LayoutScreen> {
   int currentIndex = 0;
 
   final List<Widget> pages =  [
-    HomeTab(),
+    Home(),
     SearchPage(),
     BrowsePage(),
     ProfilePage(),
