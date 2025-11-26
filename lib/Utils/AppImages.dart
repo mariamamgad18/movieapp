@@ -28,6 +28,7 @@ class Appimages {
   static const String homebackground = "assets/images/Home.png";
 
 
+  static const String star = "assets/images/star 1.png";
 
 
 
