@@ -6,5 +6,6 @@ class Approutenames {
   static const String ForgetPassword = 'ForgetPassword';
   static const String ResetPassword= 'ResetPassword';
   static const String LayoutScreens='LayoutScreens';
+  static const String MovieDeatils='MovieDeatils';
 
 }

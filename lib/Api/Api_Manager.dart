@@ -6,6 +6,8 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 
+import '../models/MovieDetailsResponse.dart';
+import '../models/MovieSuggestion.dart';
 import '../models/movies_response.dart';
 import 'ApiEndpoint.dart';
 class ApiManager {
@@ -204,6 +206,77 @@ class ApiManager {
     // 5. نرجع الماب
     return moviesByGenres;
   }
+
+
+
+
+
+
+
+  Future<MovieDetailsResponse> getMovieDetails({required int movieId}) async {
+    try {
+      final url = "${Apiendpoint.MovieDetails}?movie_id=$movieId&with_images=true&with_cast=true";
+      final response = await dio.get(url);
+
+      if (response.statusCode == 200) {
+        dynamic jsonData;
+
+        // لو رجع String → حوله JSON
+        if (response.data is String) {
+          jsonData = jsonDecode(response.data);
+        } else {
+          jsonData = response.data;
+        }
+
+        final movieDetails = MovieDetailsResponse.fromJson(jsonData);
+
+        if (movieDetails.status == "ok") {
+          return movieDetails;
+        } else {
+          throw Exception("API error: ${movieDetails.statusMessage}");
+        }
+      } else {
+        throw Exception("Server returned status code ${response.statusCode}");
+      }
+    } on DioException catch (e) {
+      throw Exception("Network error: ${e.message}");
+    } catch (e) {
+      throw Exception("Parsing error: $e");
+    }
+  }
+
+  Future<MovieSuggestionsResponse> getMovieSuggestion({required int movieId}) async {
+    try {
+      final url = "${Apiendpoint.MovieSuggestion}?movie_id=$movieId";
+      final response = await dio.get(url);
+
+      if (response.statusCode == 200) {
+        dynamic jsonData;
+
+        // لو رجع String → حوله JSON
+        if (response.data is String) {
+          jsonData = jsonDecode(response.data);
+        } else {
+          jsonData = response.data;
+        }
+
+        final MovieSuggestion = MovieSuggestionsResponse.fromJson(jsonData);
+
+        if (MovieSuggestion.status == "ok") {
+          return MovieSuggestion;
+        } else {
+          throw Exception("API error: ${MovieSuggestion.statusMessage}");
+        }
+      } else {
+        throw Exception("Server returned status code ${response.statusCode}");
+      }
+    } on DioException catch (e) {
+      throw Exception("Network error: ${e.message}");
+    } catch (e) {
+      throw Exception("Parsing error: $e");
+    }
+  }
+
 }
 
 
