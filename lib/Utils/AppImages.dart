@@ -25,9 +25,28 @@ class Appimages {
 
   static const String ForgotPassword = "assets/images/Forgot password-bro 1.png";
 
+  static const String homebackground = "assets/images/Home.png";
 
 
+  static const String star = "assets/images/star 1.png";
 
+  //MovieDetailsimages
+
+  static const String back = "assets/images/backbutton.png";
+  static const String save = "assets/images/Save.png";
+  static const String play = "assets/images/play.png";
+  static const String likes = "assets/images/likes.png";
+  static const String watch = "assets/images/watch.png";
+  static const String fav = "assets/images/fav.png";
+  static const String screen1 = "assets/images/screen1.png";
+  static const String screen2 = "assets/images/screen2.png";
+  static const String screen3 = "assets/images/screen3.png";
+  static const String moviecover = "assets/images/Group 42.png";
+
+  static const String cast1 = "assets/images/cast1.png";
+  static const String cast2= "assets/images/cast2.png";
+  static const String cast3 = "assets/images/cast3.png";
+  static const String cast4 = "assets/images/cast4.png";
 
 
 }

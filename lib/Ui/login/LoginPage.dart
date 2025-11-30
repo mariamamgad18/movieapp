@@ -5,6 +5,7 @@ import 'package:movieapp/Ui/login/YellowButton.dart';
 import 'package:movieapp/Utils/AppRouteNames.dart';
 
 import '../../Utils/UserToken.dart';
+import '../../Utils/google_signin_helper.dart';
 import '../../utils/AppColors.dart';
 import '../../utils/AppImages.dart';
 import 'ShowDialog.dart';
@@ -124,7 +125,7 @@ class _LoginpageState extends State<Loginpage> {
                             message: "Login Successful",
                             onPressed: () {
                               Navigator.pushReplacementNamed(
-                                  context, Approutenames.profile);
+                                  context, Approutenames.LayoutScreens);
                             },
                           );
 
@@ -210,15 +211,33 @@ class _LoginpageState extends State<Loginpage> {
               ///
               /// Google login
               InkWell(
-                onTap: () {
-                  MyDialog.show(
-                    context: context,
-                    title: "Success",
-                    message: "Login with Google successful",
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(context, Approutenames.profile);
-                    },
-                  );
+                onTap: () async {
+                  final user = await GoogleSignInHelper.signIn(); // هنا بنسجل دخول جوجل
+                  if (user != null) {
+                    // لو اللو ان نجح
+                    print("Google Sign-In Successful!");
+                    print("User email: ${user.email}");
+                    print("User name: ${user.displayName}");
+
+                    MyDialog.show(
+                      context: context,
+                      title: "Success",
+                      message: "Logged in as ${user.displayName}",
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(context, Approutenames.LayoutScreens);
+                      },
+                    );
+                  } else {
+                    // لو حصلت مشكلة أو اليوزر عمل لوج اوت
+                    MyDialog.show(
+                      context: context,
+                      title: "Failed",
+                      message: "Google Sign-In failed or cancelled",
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    );
+                  }
                 },
                 child: Yellowbutton(
                   buttonText: "Login With Google",

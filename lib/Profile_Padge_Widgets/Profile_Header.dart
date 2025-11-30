@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'Status_Items.dart';
 
 
@@ -22,7 +23,7 @@ class ProfileHeader extends StatelessWidget {
             Text(
               "John Safwat",
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 18,
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
