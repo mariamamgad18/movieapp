@@ -34,7 +34,6 @@ class MyApp extends StatelessWidget {
           final movieId = ModalRoute.of(context)!.settings.arguments as int;
           return Moviedetailsscreen(movieId: movieId);
         },
-
       },
     );
   }
