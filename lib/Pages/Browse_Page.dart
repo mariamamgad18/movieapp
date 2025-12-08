@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:movieapp/Browse/BrowseBlock.dart';
 import 'package:movieapp/utils/AppColors.dart';
 import '../Api/Api_Manager.dart';
-import '../Browse/Browse_bloc.dart';
 import '../Browse/Browse_event.dart';
 import '../Browse/Browse_state.dart';
 
