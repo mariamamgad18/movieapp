@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:movieapp/Ui/Layout_Pages.dart';
 import 'package:movieapp/forgetpassword/forgetpassword_screen.dart';
 import 'package:movieapp/register/register_screen.dart';
+import 'package:movieapp/resetpassword/resetpassword_screen.dart';
 import 'package:movieapp/update/profile_screen.dart';
 
 import 'Ui/MovieDeatails/MovieDetailsScreen.dart';
@@ -15,7 +16,6 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -29,6 +29,7 @@ class MyApp extends StatelessWidget {
         Approutenames.Register: (context) => RegisterScreen(),
         Approutenames.profile: (context) => ProfileScreen(),
         Approutenames.ForgetPassword:(context)=>ForgetPasswordScreen(),
+        Approutenames.ResetPassword:(context)=>ResetPasswordScreen(),
         Approutenames.LayoutScreens:(context)=>LayoutScreen(),
         Approutenames.MovieDeatils: (context) {
           final movieId = ModalRoute.of(context)!.settings.arguments as int;
@@ -38,4 +39,6 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+
 

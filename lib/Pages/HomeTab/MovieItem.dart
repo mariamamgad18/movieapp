@@ -3,20 +3,61 @@ import 'package:flutter/material.dart';
 import 'package:movieapp/Utils/AppRouteNames.dart';
 
 import '../../Utils/AppImages.dart';
-import '../../models/movies_response.dart';
 
 class Movieitem extends StatelessWidget {
-  final Movies movies;
+  final dynamic movie;
+  final dynamic movies;
 
-  const Movieitem({super.key, required this.movies});
+  const Movieitem({Key? key, this.movie, this.movies}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final dynamic item = movie ?? movies;
+
+    // safety: لو ما فيش item رجع Widget فاضي
+    if (item == null) {
+      return const SizedBox.shrink();
+    }
+
+    // صور ممكن تكون null
+    final String imageUrl = (item.mediumCoverImage ??
+        item.largeCoverImage ??
+        item.smallCoverImage ??
+        item.backgroundImage ??
+        "")
+        .toString();
+
+    // rating ممكن يكون num أو string أو null
+    double rating = 0.0;
+    try {
+      if (item.rating != null) {
+        if (item.rating is num) {
+          rating = (item.rating as num).toDouble();
+        } else if (item.rating is String) {
+          rating = double.tryParse(item.rating) ?? 0.0;
+        }
+      }
+    } catch (_) {
+      rating = 0.0;
+    }
+
+    // id كـ int أو num
+    int id = 0;
+    try {
+      if (item.id != null) {
+        if (item.id is int) id = item.id as int;
+        else if (item.id is num) id = (item.id as num).toInt();
+        else if (item.id is String) id = int.tryParse(item.id) ?? 0;
+      }
+    } catch (_) {
+      id = 0;
+    }
+
     return InkWell(
-      onTap: (){
+      onTap: () {
         Navigator.of(context).pushNamed(
           Approutenames.MovieDeatils,
-          arguments: movies.id,
+          arguments: id,
         );
       },
       child: Container(
@@ -25,9 +66,9 @@ class Movieitem extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           image: DecorationImage(
-            image: CachedNetworkImageProvider(
-              movies.mediumCoverImage ?? movies.largeCoverImage ?? "",
-            ),
+            image: imageUrl.isNotEmpty
+                ? CachedNetworkImageProvider(imageUrl)
+                : const AssetImage('assets/images/placeholder.png') as ImageProvider,
             fit: BoxFit.cover,
           ),
         ),
@@ -36,7 +77,7 @@ class Movieitem extends StatelessWidget {
           child: Container(
             width: 60,
             height: 28,
-            margin: EdgeInsets.all(8),
+            margin: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: const Color.fromRGBO(18, 19, 18, 0.7),
               borderRadius: BorderRadius.circular(10),
@@ -45,13 +86,13 @@ class Movieitem extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  movies.rating?.toString() ?? "0.0",
+                  rating.toStringAsFixed(1),
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 14,
                   ),
                 ),
-                SizedBox(width: 5),
+                const SizedBox(width: 5),
                 Image.asset(
                   Appimages.star,
                   width: 18,

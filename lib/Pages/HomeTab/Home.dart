@@ -4,6 +4,7 @@ import 'package:movieapp/Utils/AppImages.dart';
 import '../../Api/Api_Manager.dart';
 import '../../Utils/AppColors.dart';
 import '../../models/movies_response.dart';
+import '../Browse_Page.dart';
 import 'MovieItem.dart';
 
 class Home extends StatefulWidget {
@@ -82,7 +83,6 @@ class _HomeState extends State<Home> {
                       padding: const EdgeInsets.only(
                           top: 114, left: 15, right: 15, bottom: 100),
                       children: [
-                        // ======== الليستة الأصلية (Carousel) ========
                         SizedBox(
                           height: 260,
                           child: PageView.builder(
@@ -95,9 +95,9 @@ class _HomeState extends State<Home> {
                                   double value = 1.0;
                                   if (_pageController.position.haveDimensions) {
                                     value = _pageController.page! - index;
-                                    value = (1 - (value.abs() * 0.3)).clamp(0.0, 1.0);
+                                    value =
+                                        (1 - (value.abs() * 0.3)).clamp(0.0, 1.0);
                                   } else {
-                                    // أول مرة قبل ما يكون _pageController.page
                                     value = index == 0 ? 1.0 : 0.7;
                                   }
                                   return Center(
@@ -116,7 +116,6 @@ class _HomeState extends State<Home> {
                           ),
                         ),
 
-                        // ======== الليستات المصنفة ========
                         const SizedBox(height: 40),
                         if (snapshotGrouped.connectionState == ConnectionState.waiting)
                           const Center(
@@ -149,20 +148,30 @@ class _HomeState extends State<Home> {
                                         fontWeight: FontWeight.w400,
                                       ),
                                     ),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          "See More",
-                                          style: TextStyle(
-                                            color: Appcolors.yellowColor,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w400,
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (_) =>
+                                                BrowsePage(selectedGenre: genreName),
                                           ),
-                                        ),
-                                        const SizedBox(width: 4),
-                                        Icon(Icons.arrow_forward_outlined,
-                                            color: Appcolors.yellowColor, size: 16)
-                                      ],
+                                        );
+                                      },
+                                      child: Row(
+                                        children: [
+                                          Text(
+                                            "See More",
+                                            style: TextStyle(
+                                              color: Appcolors.yellowColor,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Icon(Icons.arrow_forward_outlined,
+                                              color: Appcolors.yellowColor, size: 16)
+                                        ],
+                                      ),
                                     ),
                                   ],
                                 ),
