@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../Pages/Browse_Page.dart';
 import '../Pages/HomeTab/Home.dart';
 import '../Pages/Profile_Page.dart';
@@ -18,7 +19,7 @@ class _LayoutScreenState extends State<LayoutScreen> {
   final List<Widget> pages =  [
     Home(),
     SearchPage(),
-    BrowsePage(),
+    BrowsePage(selectedGenre: '',),
     ProfilePage(),
   ];
 

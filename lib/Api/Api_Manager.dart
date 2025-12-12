@@ -1,4 +1,3 @@
-//هنجمع هنا كل الlogic بتاع ال api
 
 
 import 'dart:async';
@@ -6,9 +5,14 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 
+import '../Utils/UserToken.dart';
+import '../models/DeleteProfile.dart';
 import '../models/MovieDetailsResponse.dart';
 import '../models/MovieSuggestion.dart';
-import '../models/movies_response.dart';
+import '../models/Profile_Response.dart';
+import '../models/SearchResponse.dart' as search_model;
+import '../models/UpdateProfile.dart';
+import '../models/movies_response.dart' as movies_model;
 import 'ApiEndpoint.dart';
 class ApiManager {
 //todo : هنعمل obj من Dio
@@ -55,6 +59,7 @@ class ApiManager {
       }
     }
   }
+
 
   Future<Response> register({
     required String name,
@@ -105,6 +110,7 @@ class ApiManager {
   }
 
 
+
   Future<Response> ChangePassword({
     required String oldPassword,
     required String newPassword,
@@ -143,7 +149,7 @@ class ApiManager {
   }
 
 
-  Future<MoviesResponse> getMovies() async {
+  Future<movies_model.MoviesResponse> getMovies() async {
     try {
       final response = await dio.get(Apiendpoint.MoviesUrl);
 
@@ -157,7 +163,7 @@ class ApiManager {
           jsonData = response.data;
         }
 
-        final moviesResponse = MoviesResponse.fromJson(jsonData);
+        final moviesResponse = movies_model.MoviesResponse.fromJson(jsonData);
 
         if (moviesResponse.status == "ok") {
           return moviesResponse;
@@ -175,19 +181,18 @@ class ApiManager {
   }
 
 
-
 //todo: الفانكشن المسؤوله عن تصنيف الافلام ف الهوم بيدج
   //الفانكشن المفروض ترجعلي ماب  movies  , ال key هو اسم التصنيف و الvalue هي الليسته نفسها
 
-  Future<Map<String, List<Movies>>> getMoviesGroupedByGenre() async {
+  Future<Map<String, List<movies_model.Movies>>> getMoviesGroupedByGenre() async {
     // 1. نجيب كل الأفلام
     final moviesResponse = await getMovies();
 
     // 2. نعمل ليسته من نوع Movies تشيل فيها الأفلام اللي رجعها السيرفر، ولو مفيش حط ليسته فاضية
-    final List<Movies> moviesList = moviesResponse.data?.movies ?? [];
+    final List<movies_model.Movies> moviesList = moviesResponse.data?.movies ?? [];
 
     // 3. نعمل ماب تشيل اسم التصنيف والقيمة هي ليسته الأفلام حسب التصنيف
-    Map<String, List<Movies>> moviesByGenres = {};
+    Map<String, List<movies_model.Movies>> moviesByGenres = {};
 
     // 4. الفور لوب عشان تعدي على كل فيلم
     for (var movie in moviesList) {
@@ -206,12 +211,6 @@ class ApiManager {
     // 5. نرجع الماب
     return moviesByGenres;
   }
-
-
-
-
-
-
 
   Future<MovieDetailsResponse> getMovieDetails({required int movieId}) async {
     try {
@@ -276,6 +275,131 @@ class ApiManager {
       throw Exception("Parsing error: $e");
     }
   }
+
+
+  Future<search_model.SearchResponse> searchMovies({required String query, int page = 1}) async {
+    try {
+      final response = await dio.get(
+        Apiendpoint.SearchUrl,
+        queryParameters: {
+          "query_term": query.trim(),
+          "page": page,
+        },
+        options: Options(
+          headers: {
+            "Content-Type": "application/json",
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        dynamic jsonData = response.data;
+        if (jsonData is String) {
+          jsonData = jsonDecode(jsonData);
+        }
+
+        final searchResponse = search_model.SearchResponse.fromJson(jsonData);
+
+        if (searchResponse.status == "ok") {
+          return searchResponse;
+        } else {
+          throw Exception("API error: ${searchResponse.statusMessage}");
+        }
+      } else {
+        throw Exception("Server returned status code ${response.statusCode}");
+      }
+    } on DioException catch (e) {
+      throw Exception("Network error: ${e.message}");
+    } catch (e) {
+      throw Exception("Parsing error: $e");
+    }
+  }
+
+
+  Future<ProfileResponse> getProfile() async {
+    try {
+      // نجيب التوكن بالطريقة الصحيحة
+      final token = await Usertoken.getToken();
+
+      if (token == null) {
+        throw Exception("No token saved");
+      }
+
+      final response = await dio.get(
+        Apiendpoint.ProfileUrl,
+        options: Options(
+          headers: {
+            "Authorization": "Bearer $token",
+          },
+        ),
+      );
+
+      return ProfileResponse.fromJson(response.data);
+
+    } on DioException catch (e) {
+      throw Exception("Network error: ${e.message}");
+    } catch (e) {
+      throw Exception("Parsing error: $e");
+    }
+  }
+
+
+  Future<UpdateProfile> updateProfile(Map<String, dynamic> body) async {
+    try {
+      final token = await Usertoken.getToken();
+      if (token == null) throw Exception("No token saved");
+
+      final response = await dio.patch(
+        Apiendpoint.ProfileUrl,
+        data: body,
+        options: Options(
+          headers: {"Authorization": "Bearer $token"},
+        ),
+      );
+
+      return UpdateProfile.fromJson(response.data);
+
+    } on DioException catch (e) {
+      throw Exception("Network error: ${e.message}");
+    } catch (e) {
+      throw Exception("Parsing error: $e");
+    }
+  }
+
+  Future<DeleteProfile> deleteProfile() async {
+    try {
+      final token = await Usertoken.getToken();
+      if (token == null) throw Exception("No token saved");
+
+      final response = await dio.delete(
+        Apiendpoint.ProfileUrl,
+        options: Options(
+          headers: {"Authorization": "Bearer $token"},
+        ),
+      );
+
+      return DeleteProfile.fromJson(response.data);
+
+    } on DioException catch (e) {
+      throw Exception("Network error: ${e.message}");
+    } catch (e) {
+      throw Exception("Parsing error: $e");
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
 

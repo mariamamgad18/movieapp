@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:movieapp/Utils/AppRouteNames.dart';
+
 import 'Action_Button.dart';
 
 class ActionButtonsRow extends StatelessWidget {
@@ -14,7 +16,9 @@ class ActionButtonsRow extends StatelessWidget {
             icon: Icons.edit,
             color: Colors.yellow,
             textColor: Colors.black,
-            onTap: () {},
+            onTap: () {
+              Navigator.of(context).pushNamed(Approutenames.profile);
+            },
           ),
         ),
         const SizedBox(width: 12),
