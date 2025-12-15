@@ -5,7 +5,9 @@ import '../Api/Api_Manager.dart';
 import 'Status_Items.dart';
 
 class ProfileHeader extends StatefulWidget {
-  const ProfileHeader({super.key});
+  final int watchListCount; // عدد عناصر الـ Watch List
+
+  const ProfileHeader({super.key, this.watchListCount = 0});
 
   @override
   State<ProfileHeader> createState() => _ProfileHeaderState();
@@ -54,7 +56,6 @@ class _ProfileHeaderState extends State<ProfileHeader> {
         avatar = profile.data?.avaterId ?? 0;
       });
     } catch (e) {
-      // لو API فشل، حاول تجيب البيانات من SharedPreferences
       SharedPreferences prefs = await SharedPreferences.getInstance();
       setState(() {
         userName = prefs.getString('userName') ?? "No User";
@@ -93,18 +94,18 @@ class _ProfileHeaderState extends State<ProfileHeader> {
         Padding(
           padding: const EdgeInsets.only(top: 25),
           child: Row(
-            children: const [
+            children: [
               StatusItem(
-                number: "  12",
+                number: widget.watchListCount.toString(),
                 label: "Wish List",
                 numberColor: Colors.white,
                 labelColor: Colors.white,
                 numberFontSize: 36,
                 labelFontSize: 24,
               ),
-              SizedBox(width: 40),
-              StatusItem(
-                number: "  10",
+              const SizedBox(width: 40),
+              const StatusItem(
+                number: "10",
                 label: "History",
                 numberColor: Colors.white,
                 labelColor: Colors.white,
