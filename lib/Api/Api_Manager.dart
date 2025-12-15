@@ -6,10 +6,14 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 
 import '../Utils/UserToken.dart';
+import '../models/AddMovieToFav.dart';
 import '../models/DeleteProfile.dart';
+import '../models/GetAllFavoritesMovies.dart';
 import '../models/MovieDetailsResponse.dart';
+import '../models/MovieIsFavorite.dart';
 import '../models/MovieSuggestion.dart';
 import '../models/Profile_Response.dart';
+import '../models/RemoveMovie.dart';
 import '../models/SearchResponse.dart' as search_model;
 import '../models/UpdateProfile.dart';
 import '../models/movies_response.dart' as movies_model;
@@ -117,10 +121,6 @@ class ApiManager {
     required String confirmPassword,
     required String token,
   }) async {
-    print("oldPassword: $oldPassword");
-    print("newPassword: $newPassword");
-    print("confirmPassword: $confirmPassword");
-    print("token: $token");
 
     try {
       final response = await dio.patch(
@@ -179,7 +179,6 @@ class ApiManager {
       throw Exception("Parsing error: $e");
     }
   }
-
 
 //todo: الفانكشن المسؤوله عن تصنيف الافلام ف الهوم بيدج
   //الفانكشن المفروض ترجعلي ماب  movies  , ال key هو اسم التصنيف و الvalue هي الليسته نفسها
@@ -276,7 +275,6 @@ class ApiManager {
     }
   }
 
-
   Future<search_model.SearchResponse> searchMovies({required String query, int page = 1}) async {
     try {
       final response = await dio.get(
@@ -315,7 +313,6 @@ class ApiManager {
     }
   }
 
-
   Future<ProfileResponse> getProfile() async {
     try {
       // نجيب التوكن بالطريقة الصحيحة
@@ -342,7 +339,6 @@ class ApiManager {
       throw Exception("Parsing error: $e");
     }
   }
-
 
   Future<UpdateProfile> updateProfile(Map<String, dynamic> body) async {
     try {
@@ -389,14 +385,129 @@ class ApiManager {
 
 
 
+//todo : دي وظيفتها انها تاخد بيانات الفيلم تبعتها للسيرفر
+  /*
+  movieId (string) - The ID of the movie to be added to favorites.
+
+name (string) - The name of the movie.
+
+rating (number) - The rating of the movie.
+
+imageURL (string) - The URL of the movie's image.
+
+year (string) - The release year of the movie.*/
+  Future<AddMovieToFav> AddMovieToFavorite({required String movieId , required String name , required double rating , required String imageURL , required String year ,
+  }) async{
+    try {
+      final token = await Usertoken.getToken();
+      final response = await dio.post(
+          Apiendpoint.addMovieToFavorite, data: {
+        "movieId": movieId,
+        "name": name,
+        "rating": rating,
+        "imageURL": imageURL,
+        "year": year,
+      },
+        options: Options(
+          headers: {
+            "Authorization": "Bearer $token",
+            "Content-Type": "application/json",
+          }
+        )
+      );
+      return AddMovieToFav.fromJson(response.data);
+    }catch(e){
+      return AddMovieToFav(
+        message: ["Something went wrong"],
+        error: e.toString(),
+        statusCode: 500,
+      );
+    }
+  }
 
 
 
 
+  Future<GetAllFavoritesMovies> getAllFavoritesMovies() async {
+try{
+
+  final token = await Usertoken.getToken();
+  final response = await dio.get(
+      Apiendpoint.getAllFavoritesMovies,
+    options: Options(
+      headers: {
+        "Authorization": "Bearer $token",
+
+      }
+    )
+  );
+
+  return GetAllFavoritesMovies.fromJson(response.data);
+
+}catch(e){
+
+  return GetAllFavoritesMovies(
+    message: "Something went wrong",
+    data: [],
+  );
+}
+  }
+
+//هنعمل فانكشن تتشيك ازا كان الفيلم محطوط في الفيوفريت ولا لا
+Future<MovieIsFavorite>movieIsFavorite({required String movieId})async{
+try{
+  final token = await Usertoken.getToken();
+  if(token==null){
+    //لو مفيش توكين يعني اليوزر مش عامل لوج ان
+    throw Exception("no user !");
+  }
+  final response = await dio.get(
+    //هنتشيك ع الفيلم بناء بال id بتاعه
+    "${Apiendpoint.movieIsFavorite}/$movieId",
+    options: Options(
+      headers: {
+        "Authorization": "Bearer $token",
+        "Content-Type": "application/json",
+      }
+    )
+  );
+  return MovieIsFavorite.fromJson(response.data);
+
+}catch(e){
+  return MovieIsFavorite(
+    message: "Something went wrong",
+    data: false,
+  );
+}
+}
 
 
+  Future<RemoveMovie>RemoveMovieFromFavorite({required String movieId})async{
+    try{
+      final token = await Usertoken.getToken();
+      if(token==null){
+        //لو مفيش توكين يعني اليوزر مش عامل لوج ان
+        throw Exception("no user !");
+      }
+      final response = await dio.delete(
+        //هنتشيك ع الفيلم بناء بال id بتاعه
+          "${Apiendpoint.removeMovie}/$movieId",
+          options: Options(
+              headers: {
+                "Authorization": "Bearer $token",
+                "Content-Type": "application/json",
+              }
+          )
+      );
+      return RemoveMovie.fromJson(response.data);
 
-
+    }catch(e){
+      return RemoveMovie(
+        message: "Something went wrong",
+        statusCode: 500,
+      );
+    }
+  }
 
 
 

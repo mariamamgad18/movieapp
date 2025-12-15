@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 
 class TabsSection extends StatefulWidget {
-  const TabsSection({super.key});
+  final Function(int) onTabChanged;
+
+  const TabsSection({
+    super.key,
+    required this.onTabChanged,
+  });
 
   @override
   State<TabsSection> createState() => _TabsSectionState();
@@ -18,16 +23,24 @@ class _TabsSectionState extends State<TabsSection> {
           children: [
             Expanded(
               child: GestureDetector(
-                onTap: () => setState(() => activeIndex = 0),
+                onTap: () {
+                  setState(() => activeIndex = 0);
+                  widget.onTabChanged(0);
+                },
                 child: Column(
                   children: [
-                    Icon(Icons.list, color: activeIndex == 0 ? Colors.yellow : Colors.grey),
+                    Icon(
+                      Icons.list,
+                      color: activeIndex == 0 ? Colors.yellow : Colors.grey,
+                    ),
                     const SizedBox(height: 5),
                     Text(
                       "Watch List",
                       style: TextStyle(
                         color: activeIndex == 0 ? Colors.yellow : Colors.grey,
-                        fontWeight: activeIndex == 0 ? FontWeight.bold : FontWeight.normal,
+                        fontWeight: activeIndex == 0
+                            ? FontWeight.bold
+                            : FontWeight.normal,
                       ),
                     ),
                   ],
@@ -36,16 +49,24 @@ class _TabsSectionState extends State<TabsSection> {
             ),
             Expanded(
               child: GestureDetector(
-                onTap: () => setState(() => activeIndex = 1),
+                onTap: () {
+                  setState(() => activeIndex = 1);
+                  widget.onTabChanged(1);
+                },
                 child: Column(
                   children: [
-                    Icon(Icons.history, color: activeIndex == 1 ? Colors.yellow : Colors.grey),
+                    Icon(
+                      Icons.history,
+                      color: activeIndex == 1 ? Colors.yellow : Colors.grey,
+                    ),
                     const SizedBox(height: 5),
                     Text(
                       "History",
                       style: TextStyle(
                         color: activeIndex == 1 ? Colors.yellow : Colors.grey,
-                        fontWeight: activeIndex == 1 ? FontWeight.bold : FontWeight.normal,
+                        fontWeight: activeIndex == 1
+                            ? FontWeight.bold
+                            : FontWeight.normal,
                       ),
                     ),
                   ],
