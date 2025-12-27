@@ -97,7 +97,7 @@ class _ProfileHeaderState extends State<ProfileHeader> {
             children: [
               StatusItem(
                 number: widget.watchListCount.toString(),
-                label: "Wish List",
+                label: "Watch List",
                 numberColor: Colors.white,
                 labelColor: Colors.white,
                 numberFontSize: 36,
