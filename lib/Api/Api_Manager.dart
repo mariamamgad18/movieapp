@@ -1,5 +1,3 @@
-
-
 import 'dart:async';
 import 'dart:convert';
 
@@ -149,6 +147,7 @@ class ApiManager {
   }
 
 
+
   Future<movies_model.MoviesResponse> getMovies() async {
     try {
       final response = await dio.get(Apiendpoint.MoviesUrl);
@@ -180,6 +179,9 @@ class ApiManager {
     }
   }
 
+
+
+
 //todo: الفانكشن المسؤوله عن تصنيف الافلام ف الهوم بيدج
   //الفانكشن المفروض ترجعلي ماب  movies  , ال key هو اسم التصنيف و الvalue هي الليسته نفسها
 
@@ -210,6 +212,8 @@ class ApiManager {
     // 5. نرجع الماب
     return moviesByGenres;
   }
+
+
 
   Future<MovieDetailsResponse> getMovieDetails({required int movieId}) async {
     try {
@@ -275,6 +279,8 @@ class ApiManager {
     }
   }
 
+
+
   Future<search_model.SearchResponse> searchMovies({required String query, int page = 1}) async {
     try {
       final response = await dio.get(
@@ -315,7 +321,6 @@ class ApiManager {
 
   Future<ProfileResponse> getProfile() async {
     try {
-      // نجيب التوكن بالطريقة الصحيحة
       final token = await Usertoken.getToken();
 
       if (token == null) {
@@ -454,7 +459,7 @@ try{
   }
 
 //هنعمل فانكشن تتشيك ازا كان الفيلم محطوط في الفيوفريت ولا لا
-Future<MovieIsFavorite>movieIsFavorite({required String movieId})async{
+Future<MovieIsFavorite>movieIsFavorite({required int movieId})async{
 try{
   final token = await Usertoken.getToken();
   if(token==null){

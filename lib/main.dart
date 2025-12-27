@@ -1,18 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movieapp/Ui/Layout_Pages.dart';
 import 'package:movieapp/forgetpassword/forgetpassword_screen.dart';
 import 'package:movieapp/register/register_screen.dart';
 import 'package:movieapp/resetpassword/resetpassword_screen.dart';
 import 'package:movieapp/update/profile_screen.dart';
 
+import 'Api/Api_Manager.dart';
+import 'Cubit/FavoriteCubit/FavoriteCubit.dart';
+import 'Cubit/My_Bloc_Observer.dart';
+import 'Data/ProfileData/DataSource/Impl/ProfileRemoteDataSourceImpl.dart';
+import 'Data/ProfileData/Repository/Impl/ProfileRepositoryImpl.dart';
 import 'Ui/MovieDeatails/MovieDetailsScreen.dart';
 import 'Ui/login/LoginPage.dart';
 import 'Ui/onboarding_screen.dart';
 import 'Utils/AppRouteNames.dart';
 
 void main() {
-  runApp(const MyApp());
-}
+  Bloc.observer = MyBlocObserver();
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => FavoriteCubit(
+            ProfileRepositoryImpl(
+              profileRemoteDataSource: ProfileRemoteDataSourceImpl(
+                apiManager: ApiManager(),
+              ),
+            ),
+            ApiManager(),
+          )..loadFavorites(),
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  );}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
